@@ -13,6 +13,8 @@ class UserModel(db.Model):
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
 
+    blogs = db.relationship("BlogModel", backref="users", lazy=True)
+
     def save(self):
         db.session.add(self)
         db.session.commit()
@@ -35,7 +37,7 @@ class UserModel(db.Model):
 
     @classmethod
     def find_user_by_id(cls, _id: int) -> "UserModel":
-        return cls.query.filter_by(id=_id).first()
+        return cls.query.get(_id)
 
     @classmethod
     def find_user_by_email(cls, email: str) -> "UserModel":

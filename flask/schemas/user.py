@@ -1,9 +1,10 @@
 from schemas import ma
 from models.user import UserModel
+from schemas.blog import BlogSchema
 
 
 class UserSchema(ma.ModelSchema):
-    # blog = ma.Nested(BlogSchema, many=True)
+    blog = ma.Nested(BlogSchema, many=True)
 
     class Meta:
         model = UserModel
