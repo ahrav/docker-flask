@@ -1,6 +1,6 @@
 FROM python:3.7.2-stretch
 
-ENV APP /APP
+ENV APP /App
 WORKDIR ${APP}
 
 EXPOSE 5000

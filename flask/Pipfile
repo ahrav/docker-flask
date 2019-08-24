@@ -4,11 +4,13 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+flake8 = "*"
+pep8 = "*"
+black = "*"
 
 [packages]
 flask = "*"
 flask-sqlalchemy = "*"
-psycopg2 = "*"
 flask-migrate = "*"
 flask-script = "*"
 marshmallow = "*"
@@ -20,6 +22,10 @@ uwsgi = "*"
 flask-restful = "*"
 flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
+psycopg2-binary = "<=2.7.5"
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true

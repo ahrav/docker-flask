@@ -7,6 +7,8 @@ services:
     restart: always
     volumes:
       - ./flask:/app
+    env_file:
+      - ./flask/.env
 
   nginx:
     build:
