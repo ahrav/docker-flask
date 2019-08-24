@@ -23,6 +23,7 @@ flask-restful = "*"
 flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 psycopg2-binary = "<=2.7.5"
+flask-jwt-extended = "*"
 
 [requires]
 python_version = "3.7"

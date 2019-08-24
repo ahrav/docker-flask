@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from models import db
 from schemas import ma
 from resources.user import UserRegister
+from flask_jwt_extended import JWTManager
 
 
 app = Flask(__name__)
@@ -19,6 +20,9 @@ api = Api(app)
 @app.before_first_request
 def create_tables():
     db.create_all()
+
+
+jwt = JWTManager(app)
 
 
 api.add_resource(UserRegister, "/api/v1/register")

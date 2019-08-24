@@ -3,6 +3,7 @@ from flask import request
 from werkzeug.security import safe_str_cmp
 from models.user import UserModel
 from schemas.user import UserSchema
+from libs.auth import generate_tokens
 
 
 user_schema = UserSchema()
@@ -21,7 +22,8 @@ class UserRegister(Resource):
             hashed_pass = user.generate_hash(user.password)
             user.password = hashed_pass
             user.save()
-            return {"message": "User successfully registered"}, 201
+            tokens = generate_tokens(user.id)
+            return tokens, 201
         except Exception as e:
             print(e)
             user.delete()
