@@ -20,10 +20,10 @@ class UserModel(db.Model):
         db.session.commit()
 
     def update(self, data):
-        for key, item in data.items():
+        for key, value in data.items():
             if key == "password":
-                self.password = self.generate_hash(item)
-            setattr(self, key, item)
+                self.password = self.generate_hash(value)
+            setattr(self, key, value)
         self.modified_at = datetime.datetime.utcnow()
         db.session.commit()
 

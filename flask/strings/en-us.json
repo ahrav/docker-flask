@@ -3,5 +3,6 @@
   "user_register_error": "Internal server error while registering user, please try again.",
   "user_not_found": "User not found",
   "invalid_login_credentials": "Invalid credentials, please try again",
-  "user_logout_success": "Successfully logged out"
+  "user_logout_success": "Successfully logged out",
+  "user_delete_success": "Successfully deleted user"
 }

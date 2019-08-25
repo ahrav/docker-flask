@@ -4,7 +4,13 @@ from werkzeug.security import safe_str_cmp
 from models.user import UserModel
 from schemas.user import UserSchema
 from libs.auth import generate_tokens
-from flask_jwt_extended import jwt_required, get_raw_jwt, get_jwt_identity
+from flask_jwt_extended import (
+    jwt_required,
+    get_raw_jwt,
+    get_jwt_identity,
+    jwt_refresh_token_required,
+    create_access_token,
+)
 from blacklist import BLACKLIST
 from libs.strings import gettext
 
@@ -44,12 +50,21 @@ class User(Resource):
         return user_schema.dump(user), 200
 
     @classmethod
-    def update(cls, user_id: int) -> "UserModel":
-        pass
+    def put(cls, user_id: int) -> "UserModel":
+        user_json = request.get_json()
+        user = UserModel.find_user_by_id(user_id)
+        if not user:
+            return {"message": gettext("user_not_found")}, 404
+        user.update(user_json)
+        return user_schema.dump(user), 200
 
     @classmethod
     def delete(cls, user_id: int) -> None:
-        pass
+        user = UserModel.find_user_by_id(user_id)
+        if not user:
+            return {"message": gettext("user_not_found")}, 404
+        user.delete()
+        return {"message": gettext("user_delete_success")}, 200
 
 
 class UserLogin(Resource):
@@ -74,3 +89,12 @@ class UserLogout(Resource):
         # user_id = get_jwt_identity()
         BLACKLIST.add(jti)
         return {"message": gettext("user_logout_success")}, 200
+
+
+class TokenRefresh(Resource):
+    @classmethod
+    @jwt_refresh_token_required
+    def post(cls):
+        current_user = get_jwt_identity()
+        new_token = create_access_token(identity=current_user, fresh=False)
+        return {"access_token": new_token}, 200
