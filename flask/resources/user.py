@@ -4,6 +4,9 @@ from werkzeug.security import safe_str_cmp
 from models.user import UserModel
 from schemas.user import UserSchema
 from libs.auth import generate_tokens
+from flask_jwt_extended import jwt_required, get_raw_jwt, get_jwt_identity
+from blacklist import BLACKLIST
+from libs.strings import gettext
 
 
 user_schema = UserSchema()
@@ -16,7 +19,7 @@ class UserRegister(Resource):
         user = user_schema.load(user_json)
 
         if UserModel.find_user_by_email(user.email):
-            return {"message": "Username already exists"}, 400
+            return {"message": gettext("username_exists")}, 400
 
         try:
             hashed_pass = user.generate_hash(user.password)
@@ -27,7 +30,7 @@ class UserRegister(Resource):
         except Exception as e:
             print(e)
             user.delete()
-            return {"message": "Internal server error please try again"}, 500
+            return {"message": gettext("user_register_error")}, 500
 
 
 class User(Resource):
@@ -37,7 +40,7 @@ class User(Resource):
     def get(cls, user_id: int) -> "UserModel":
         user = UserModel.find_user_by_id(user_id)
         if not user:
-            return {"message": "User not found"}, 404
+            return {"message": gettext("user_not_found")}, 404
         return user_schema.dump(user), 200
 
     @classmethod
@@ -60,4 +63,14 @@ class UserLogin(Resource):
         if user and user.check_hash(user_data.password):
             tokens = generate_tokens(user.id)
             return tokens, 200
-        return {"message": "Invalid credentials, please try again"}
+        return {"message": gettext("invalid_login_credentials")}
+
+
+class UserLogout(Resource):
+    @classmethod
+    @jwt_required
+    def post(cls) -> None:
+        jti = get_raw_jwt()["jti"]
+        # user_id = get_jwt_identity()
+        BLACKLIST.add(jti)
+        return {"message": gettext("user_logout_success")}, 200

@@ -3,8 +3,9 @@ from flask_restful import Api
 from dotenv import load_dotenv
 from models import db
 from schemas import ma
-from resources.user import UserRegister, User, UserLogin
+from resources.user import UserRegister, User, UserLogin, UserLogout
 from flask_jwt_extended import JWTManager
+from blacklist import BLACKLIST
 
 
 app = Flask(__name__)
@@ -25,8 +26,14 @@ def create_tables():
 jwt = JWTManager(app)
 
 
+@jwt.token_in_blacklist_loader
+def check_token_in_blacklist(decrypted_token):
+    return decrypted_token["jti"] in BLACKLIST
+
+
 api.add_resource(UserRegister, "/api/v1/register")
 api.add_resource(UserLogin, "/api/v1/login")
+api.add_resource(UserLogout, "/api/v1/logout")
 api.add_resource(User, "/api/v1/user/<int:user_id>")
 
 
