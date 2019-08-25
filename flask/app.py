@@ -3,7 +3,7 @@ from flask_restful import Api
 from dotenv import load_dotenv
 from models import db
 from schemas import ma
-from resources.user import UserRegister
+from resources.user import UserRegister, User, UserLogin
 from flask_jwt_extended import JWTManager
 
 
@@ -26,6 +26,8 @@ jwt = JWTManager(app)
 
 
 api.add_resource(UserRegister, "/api/v1/register")
+api.add_resource(UserLogin, "/api/v1/login")
+api.add_resource(User, "/api/v1/user/<int:user_id>")
 
 
 if __name__ == "__main__":

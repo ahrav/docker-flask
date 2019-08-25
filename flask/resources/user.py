@@ -28,3 +28,36 @@ class UserRegister(Resource):
             print(e)
             user.delete()
             return {"message": "Internal server error please try again"}, 500
+
+
+class User(Resource):
+    """internal testing endpoint"""
+
+    @classmethod
+    def get(cls, user_id: int) -> "UserModel":
+        user = UserModel.find_user_by_id(user_id)
+        if not user:
+            return {"message": "User not found"}, 404
+        return user_schema.dump(user), 200
+
+    @classmethod
+    def update(cls, user_id: int) -> "UserModel":
+        pass
+
+    @classmethod
+    def delete(cls, user_id: int) -> None:
+        pass
+
+
+class UserLogin(Resource):
+    @classmethod
+    def post(cls):
+        user_json = request.get_json()
+        user_data = user_schema.load(user_json, partial=True)
+
+        user = UserModel.find_user_by_email(user_data.email)
+
+        if user and user.check_hash(user_data.password):
+            tokens = generate_tokens(user.id)
+            return tokens, 200
+        return {"message": "Invalid credentials, please try again"}
